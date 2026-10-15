@@ -9,6 +9,7 @@ import com.example.coupon.repository.IssuedCouponRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 
 @Service
@@ -22,6 +23,7 @@ class CouponService(
         return CouponResponse(requireNotNull(saved.id), saved.count)
     }
 
+    @Transactional
     fun issue(memberId: Long, couponId: Long): IssuedCouponResponse {
         val coupon = couponRepository.findByIdOrNull(couponId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
