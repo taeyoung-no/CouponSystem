@@ -1,5 +1,6 @@
 package com.example.coupon.controller
 
+import com.example.coupon.dto.LoginResponse
 import com.example.coupon.dto.MemberResponse
 import com.example.coupon.service.MemberService
 import org.springframework.web.bind.annotation.PostMapping
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController
 class MemberController(private val memberService: MemberService) {
 
     @PostMapping("/signup")
-    fun signup(username: String, password: String) = memberService.signup(username, password)
+    fun signup(username: String, password: String): MemberResponse = memberService.signup(username, password)
 
     @PostMapping("/login")
-    fun login(username: String, password: String) = memberService.login(username, password)
+    fun login(username: String, password: String): LoginResponse = memberService.login(username, password)
 }
