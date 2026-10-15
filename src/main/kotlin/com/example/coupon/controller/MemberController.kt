@@ -12,4 +12,7 @@ class MemberController(private val memberService: MemberService) {
 
     @PostMapping("/signup")
     fun signup(username: String, password: String) = memberService.signup(username, password)
+
+    @PostMapping("/login")
+    fun login(username: String, password: String) = memberService.login(username, password)
 }
