@@ -18,7 +18,7 @@ class SecurityConfig(private val jwtProvider: JwtProvider) {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it.requestMatchers("/api/hello", "/api/member/**").permitAll()
-                it.requestMatchers(HttpMethod.POST, ("/api/coupon")).permitAll()
+                it.requestMatchers(HttpMethod.POST, "/api/coupon").permitAll()
                 it.anyRequest().authenticated()
             }
             .addFilterBefore(
