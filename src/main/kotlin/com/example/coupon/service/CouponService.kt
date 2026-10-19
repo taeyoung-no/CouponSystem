@@ -25,7 +25,7 @@ class CouponService(
 
     @Transactional
     fun issue(memberId: Long, couponId: Long): IssuedCouponResponse {
-        val coupon = couponRepository.findByIdOrNull(couponId)
+        val coupon = couponRepository.findByIdForUpdate(couponId)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         if (coupon.count <= 0) {
             throw ResponseStatusException(HttpStatus.CONFLICT)
