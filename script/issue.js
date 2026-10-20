@@ -5,14 +5,14 @@ export const options = {
   scenarios: {
     issue: {
       executor: 'per-vu-iterations',
-      vus: 50,
+      vus: 500,
       iterations: 1,
     },
   },
 }
 
 export function setup() {
-  const couponRes = http.post('http://localhost:8080/api/coupon', { count: 10 })
+  const couponRes = http.post('http://localhost:8080/api/coupon', { count: 100 })
   const couponId = couponRes.json('id')
   const password = 'qwer1234'
 
