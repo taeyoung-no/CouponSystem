@@ -16,21 +16,23 @@ import org.springframework.web.server.ResponseStatusException
 class CouponService(
     private val couponRepository: CouponRepository,
     private val issuedCouponRepository: IssuedCouponRepository,
+    private val couponIssuer: CouponIssuer,
 ) {
 
     fun create(count: Int): CouponResponse {
         val saved = couponRepository.save(Coupon(count))
-        return CouponResponse(requireNotNull(saved.id), saved.count)
+        val id = requireNotNull(saved.id)
+        couponIssuer.init(id, saved.count)
+        return CouponResponse(id, saved.count)
     }
 
     @Transactional
     fun issue(memberId: Long, couponId: Long): IssuedCouponResponse {
-        val coupon = couponRepository.findByIdForUpdate(couponId)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        if (coupon.count <= 0) {
-            throw ResponseStatusException(HttpStatus.CONFLICT)
+        if (!couponRepository.existsById(couponId)) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND)
         }
-        coupon.count--
+        couponIssuer.tryIssue(couponId)
+        couponRepository.decrementCount(couponId)
         val saved = issuedCouponRepository.save(IssuedCoupon(memberId, couponId))
         return IssuedCouponResponse(requireNotNull(saved.id), memberId, couponId)
     }
