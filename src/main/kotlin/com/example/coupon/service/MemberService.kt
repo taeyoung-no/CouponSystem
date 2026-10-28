@@ -4,10 +4,9 @@ import com.example.coupon.auth.JwtProvider
 import com.example.coupon.dto.LoginResponse
 import com.example.coupon.dto.MemberResponse
 import com.example.coupon.entity.Member
+import com.example.coupon.exception.UnauthorizedException
 import com.example.coupon.repository.MemberRepository
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 class MemberService(
@@ -23,7 +22,7 @@ class MemberService(
     fun login(username: String, password: String): LoginResponse {
         val member = memberRepository.findByUsername(username)
         if (member?.password != password) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "뭔가 잘못 입력함")
+            throw UnauthorizedException()
         }
         return LoginResponse(jwtProvider.createToken(requireNotNull(member.id)))
     }

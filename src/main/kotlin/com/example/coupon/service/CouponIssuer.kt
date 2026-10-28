@@ -1,11 +1,11 @@
 package com.example.coupon.service
 
+import com.example.coupon.exception.AlreadyIssuedException
+import com.example.coupon.exception.SoldOutException
 import org.springframework.core.io.ClassPathResource
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.core.script.RedisScript
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.web.server.ResponseStatusException
 
 @Component
 class CouponIssuer(private val redisTemplate: StringRedisTemplate) {
@@ -27,8 +27,8 @@ class CouponIssuer(private val redisTemplate: StringRedisTemplate) {
         ) ?: error("Lua 스크립트 문제인 듯")
 
         when (raw) {
-            -1L -> throw ResponseStatusException(HttpStatus.CONFLICT)
-            0L -> throw ResponseStatusException(HttpStatus.CONFLICT)
+            -1L -> throw AlreadyIssuedException()
+            0L -> throw SoldOutException()
             1L -> Unit
             else -> error("Lua 스크립트 문제인 듯")
         }
