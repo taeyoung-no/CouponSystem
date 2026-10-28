@@ -12,6 +12,9 @@ export const options = {
       iterations: 1,
     },
   },
+  thresholds: {
+    'http_req_duration{name:issue}': ['p(95)<500'],
+  },
 }
 
 export function setup() {
@@ -34,5 +37,6 @@ export default function (data) {
   const token = data.tokens[__VU - 1]
   http.post(`http://localhost:8080/api/coupon/${data.couponId}/issue`, null, {
     headers: { Authorization: `Bearer ${token}` },
+    tags: { name: 'issue' },
   })
 }
