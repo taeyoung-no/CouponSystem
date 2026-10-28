@@ -33,7 +33,7 @@ class CouponService(
         if (!couponRepository.existsById(couponId)) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND)
         }
-        couponIssuer.tryIssue(couponId)
+        couponIssuer.tryIssue(couponId, memberId)
         couponIssuedProducer.publish(CouponIssued(memberId, couponId))
         return IssuedCouponResponse(memberId, couponId)
     }

@@ -16,19 +16,25 @@ class CouponIssuer(private val redisTemplate: StringRedisTemplate) {
     )
 
     fun init(couponId: Long, count: Int) {
-        redisTemplate.opsForValue().set(getKey(couponId), count.toString())
+        redisTemplate.opsForValue().set(getCountKey(couponId), count.toString())
     }
 
-    fun tryIssue(couponId: Long) {
-        val raw = redisTemplate.execute(script, listOf(getKey(couponId)))
-            ?: error("Lua 스크립트 문제인 듯")
+    fun tryIssue(couponId: Long, memberId: Long) {
+        val raw = redisTemplate.execute(
+            script,
+            listOf(getCountKey(couponId), getMembersKey(couponId)),
+            memberId.toString(),
+        ) ?: error("Lua 스크립트 문제인 듯")
 
         when (raw) {
+            -1L -> throw ResponseStatusException(HttpStatus.CONFLICT)
             0L -> throw ResponseStatusException(HttpStatus.CONFLICT)
             1L -> Unit
             else -> error("Lua 스크립트 문제인 듯")
         }
     }
 
-    private fun getKey(couponId: Long) = "coupon:$couponId:count"
+    private fun getCountKey(couponId: Long) = "coupon:$couponId:count"
+
+    private fun getMembersKey(couponId: Long) = "coupon:$couponId:members"
 }
