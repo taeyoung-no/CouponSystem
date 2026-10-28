@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 class CouponController(private val couponService: CouponService) {
 
     @PostMapping
-    fun create(count: Int): CouponResponse = couponService.create(count)
+    fun create(@RequestParam count: Int): CouponResponse = couponService.create(count)
 
     @PostMapping("/{id}/issue")
     fun issue(
