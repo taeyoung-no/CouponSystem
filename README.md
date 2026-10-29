@@ -1,5 +1,5 @@
 ```bash
-script/run-issue.sh
+script/run-load.sh
 ```
 
 ```bash
