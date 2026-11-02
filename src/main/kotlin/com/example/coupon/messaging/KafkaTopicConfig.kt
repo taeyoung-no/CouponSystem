@@ -12,4 +12,9 @@ class KafkaTopicConfig {
     fun couponIssuedTopic(): NewTopic {
         return TopicBuilder.name(KafkaTopics.COUPON_ISSUED).partitions(3).replicas(1).build()
     }
+
+    @Bean
+    fun couponIssuedDltTopic(): NewTopic {
+        return TopicBuilder.name(KafkaTopics.COUPON_ISSUED_DLT).partitions(3).replicas(1).build()
+    }
 }
