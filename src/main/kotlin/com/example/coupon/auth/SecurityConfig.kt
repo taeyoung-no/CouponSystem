@@ -19,6 +19,7 @@ class SecurityConfig(private val jwtProvider: JwtProvider) {
             .authorizeHttpRequests {
                 it.requestMatchers("/api/hello", "/api/member/**").permitAll()
                 it.requestMatchers(HttpMethod.POST, "/api/coupon").permitAll()
+                it.requestMatchers("/api/coupon/dlt/**").hasRole("ADMIN")
                 it.anyRequest().authenticated()
             }
             .addFilterBefore(

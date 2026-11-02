@@ -24,6 +24,6 @@ class MemberService(
         if (member?.password != password) {
             throw UnauthorizedException()
         }
-        return LoginResponse(jwtProvider.createToken(requireNotNull(member.id)))
+        return LoginResponse(jwtProvider.createToken(requireNotNull(member.id), member.role))
     }
 }
