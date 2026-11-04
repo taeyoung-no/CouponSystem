@@ -30,4 +30,15 @@ class CouponReconcileService(
             redisIssued == dbIssued,
         )
     }
+
+    fun reconcile(couponId: Long): CouponReconcileResponse {
+        val issued = issuedCouponRepository.findByCouponId(couponId)
+        if (issued.isNotEmpty()) {
+            redisTemplate.opsForSet().add(
+                "coupon:$couponId:members",
+                *issued.map { it.memberId.toString() }.toTypedArray(),
+            )
+        }
+        return report(couponId)
+    }
 }

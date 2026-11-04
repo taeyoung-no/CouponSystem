@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface IssuedCouponRepository : JpaRepository<IssuedCoupon, Long> {
 
     fun countByCouponId(couponId: Long): Long
+
+    fun findByCouponId(couponId: Long): List<IssuedCoupon>
 }

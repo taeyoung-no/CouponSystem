@@ -30,5 +30,8 @@ class CouponController(
     ): IssuedCouponResponse = couponService.issue(authentication.principal as Long, id)
 
     @GetMapping("{id}/reconcile")
-    fun reconcile(@PathVariable id: Long): CouponReconcileResponse = couponReconcileService.report(id)
+    fun report(@PathVariable id: Long): CouponReconcileResponse = couponReconcileService.report(id)
+
+    @PostMapping("/{id}/reconcile")
+    fun reconcile(@PathVariable id: Long): CouponReconcileResponse = couponReconcileService.reconcile(id)
 }
