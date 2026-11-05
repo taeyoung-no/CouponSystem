@@ -9,4 +9,5 @@ end
 
 redis.call('DECR', KEYS[1])
 redis.call('SADD', KEYS[2], ARGV[1])
+redis.call('ZADD', KEYS[3], ARGV[2], ARGV[3])
 return 1

@@ -3,7 +3,9 @@ package com.example.coupon.service
 import com.example.coupon.dto.CouponReconcileResponse
 import com.example.coupon.repository.CouponRepository
 import com.example.coupon.repository.IssuedCouponRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,6 +13,8 @@ class CouponReconcileService(
     private val couponRepository: CouponRepository,
     private val issuedCouponRepository: IssuedCouponRepository,
     private val redisTemplate: StringRedisTemplate,
+    @Value("\${coupon.reconcile.interval-ms}") private val intervalMs: Long,
+    @Value("\${coupon.reconcile.grace-period-ms}") private val gracePeriodMs: Long,
 ) {
 
     fun report(couponId: Long): CouponReconcileResponse {
@@ -40,5 +44,18 @@ class CouponReconcileService(
             )
         }
         return report(couponId)
+    }
+
+    @Scheduled(fixedRateString = "\${coupon.reconcile.interval-ms}")
+    fun recent() {
+        val end = System.currentTimeMillis() - gracePeriodMs
+        val start = end - intervalMs * 2
+        val couponIds = redisTemplate.opsForZSet().rangeByScore(
+            "coupon:reconcile:recent",
+            start.toDouble(),
+            end.toDouble(),
+        ) ?: emptySet()
+
+        couponIds.mapNotNull { it.toLongOrNull() }.forEach { reconcile(it) }
     }
 }

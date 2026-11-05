@@ -22,8 +22,10 @@ class CouponIssuer(private val redisTemplate: StringRedisTemplate) {
     fun tryIssue(couponId: Long, memberId: Long) {
         val raw = redisTemplate.execute(
             script,
-            listOf(getCountKey(couponId), getMembersKey(couponId)),
+            listOf(getCountKey(couponId), getMembersKey(couponId), "coupon:reconcile:recent"),
             memberId.toString(),
+            System.currentTimeMillis().toString(),
+            couponId.toString(),
         ) ?: error("Lua 스크립트 문제인 듯")
 
         when (raw) {
