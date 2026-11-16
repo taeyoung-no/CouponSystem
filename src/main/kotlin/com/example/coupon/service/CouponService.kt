@@ -4,6 +4,7 @@ import com.example.coupon.dto.CouponResponse
 import com.example.coupon.dto.IssuedCouponResponse
 import com.example.coupon.entity.Coupon
 import com.example.coupon.exception.CouponNotFoundException
+import com.example.coupon.exception.SoldOutException
 import com.example.coupon.messaging.CouponIssued
 import com.example.coupon.messaging.CouponIssuedProducer
 import com.example.coupon.repository.CouponRepository
@@ -15,6 +16,7 @@ class CouponService(
     private val couponRepository: CouponRepository,
     private val couponIssuer: CouponIssuer,
     private val couponIssuedProducer: CouponIssuedProducer,
+    private val soldOutChecker: SoldOutChecker,
 ) {
 
     fun create(count: Int): CouponResponse {
@@ -26,6 +28,9 @@ class CouponService(
 
     @Transactional
     fun issue(memberId: Long, couponId: Long): IssuedCouponResponse {
+        if (soldOutChecker.isSoldOut(couponId)) {
+            throw SoldOutException()
+        }
         if (!couponRepository.existsById(couponId)) {
             throw CouponNotFoundException()
         }

@@ -6,4 +6,5 @@ TRUNCATE TABLE member;
 "
 docker compose exec redis redis-cli CONFIG RESETSTAT
 k6 run script/sold-out-load.js
-docker compose exec redis redis-cli INFO commandstats | grep -i eval
+docker compose exec redis redis-cli INFO commandstats | grep -E 'cmdstat_(eval|evalsha|get):'
+

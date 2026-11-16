@@ -36,6 +36,8 @@ class CouponIssuer(private val redisTemplate: StringRedisTemplate) {
         }
     }
 
+    fun getCount(couponId: Long): Long? = redisTemplate.opsForValue().get(getCountKey(couponId))?.toLongOrNull()
+
     private fun getCountKey(couponId: Long) = "coupon:$couponId:count"
 
     private fun getMembersKey(couponId: Long) = "coupon:$couponId:members"
