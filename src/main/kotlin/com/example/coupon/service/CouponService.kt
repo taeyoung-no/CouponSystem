@@ -26,7 +26,6 @@ class CouponService(
         return CouponResponse(id, saved.count)
     }
 
-    @Transactional
     fun issue(memberId: Long, couponId: Long): IssuedCouponResponse {
         if (soldOutChecker.isSoldOut(couponId)) {
             throw SoldOutException()
