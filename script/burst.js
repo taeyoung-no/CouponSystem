@@ -7,7 +7,7 @@ const VU_COUNT = 500
 
 export const options = {
   scenarios: {
-    issue: {
+    burst: {
       executor: 'per-vu-iterations',
       vus: VU_COUNT,
       iterations: 1,

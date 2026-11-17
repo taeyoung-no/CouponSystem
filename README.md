@@ -3,7 +3,7 @@
 ```
 
 ```bash
-script/run-load.sh
+script/run-burst.sh
 ```
 
 ```bash

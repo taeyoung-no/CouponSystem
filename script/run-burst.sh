@@ -4,4 +4,4 @@ TRUNCATE TABLE issued_coupon;
 TRUNCATE TABLE coupon;
 TRUNCATE TABLE member;
 "
-k6 run script/load.js
+k6 run script/burst.js
