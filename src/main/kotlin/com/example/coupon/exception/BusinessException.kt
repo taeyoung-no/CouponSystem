@@ -14,3 +14,7 @@ class AlreadyIssuedException : BusinessException(HttpStatus.CONFLICT, "이미 �
 class SoldOutException : BusinessException(HttpStatus.CONFLICT, "다 팔렸음")
 
 class UnauthorizedException : BusinessException(HttpStatus.UNAUTHORIZED, "뭔가 잘못 입력함")
+
+class NotInWaitingQueueException : BusinessException(HttpStatus.NOT_FOUND, "대기열에 없음")
+
+class ShouldWaitException: BusinessException(HttpStatus.FORBIDDEN, "기다리셈")

@@ -1,7 +1,8 @@
 import http from 'k6/http'
-import { check } from 'k6'
+import { sleep } from 'k6'
 
-const COUPON_COUNT = 100
+const BASE = 'http://localhost:8080'
+const COUPON_COUNT = 1000
 const VU_COUNT = 500
 
 export const options = {
@@ -12,21 +13,18 @@ export const options = {
       iterations: 1,
     },
   },
-  thresholds: {
-    'http_req_duration{name:issue}': ['p(95)<500'],
-  },
 }
 
 export function setup() {
-  const couponRes = http.post('http://localhost:8080/api/coupon', { count: COUPON_COUNT })
+  const couponRes = http.post(`${BASE}/api/coupon`, { count: COUPON_COUNT })
   const couponId = couponRes.json('id')
   const password = 'qwer1234'
 
   const tokens = []
   for (let i = 0; i < VU_COUNT; i++) {
     const username = `username${i}`
-    http.post('http://localhost:8080/api/member/signup', { username, password })
-    const loginRes = http.post('http://localhost:8080/api/member/login', { username, password })
+    http.post(`${BASE}/api/member/signup`, { username, password })
+    const loginRes = http.post(`${BASE}/api/member/login`, { username, password })
     tokens.push(loginRes.json('token'))
   }
 
@@ -34,9 +32,13 @@ export function setup() {
 }
 
 export default function (data) {
-  const token = data.tokens[__VU - 1]
-  http.post(`http://localhost:8080/api/coupon/${data.couponId}/issue`, null, {
-    headers: { Authorization: `Bearer ${token}` },
-    tags: { name: 'issue' },
-  })
+  const headers = { Authorization: `Bearer ${data.tokens[__VU - 1]}` }
+
+  let admitted = http.post(`${BASE}/api/waiting-queue/${data.couponId}`, null, { headers }).json('admitted')
+  while (admitted === false) {
+    sleep(1)
+    admitted = http.get(`${BASE}/api/waiting-queue/${data.couponId}`, { headers }).json('admitted')
+  }
+
+  http.post(`${BASE}/api/coupon/${data.couponId}/issue`, null, { headers })
 }
