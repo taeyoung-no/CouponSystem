@@ -37,6 +37,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-kafka")
     implementation("com.github.ben-manes.caffeine:caffeine")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:6.6.0")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-redis-spring:6.6.0")
 }
 
 kotlin {

@@ -3,6 +3,7 @@ package com.example.coupon.service
 import com.example.coupon.dto.WaitingQueueResponse
 import com.example.coupon.exception.NotInWaitingQueueException
 import com.example.coupon.repository.WaitingQueueRepository
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
@@ -22,6 +23,7 @@ class WaitingQueueService(private val waitingQueueRepository: WaitingQueueReposi
     }
 
     @Scheduled(fixedRate = 1000)
+    @SchedulerLock(name = "waiting-queue-dequeue", lockAtLeastFor = "PT0.95S")
     fun dequeue() {
         waitingQueueRepository.getActiveCouponIds().forEach { couponId ->
             waitingQueueRepository.dequeue(couponId, ADMIT_PER_SECOND, PASS_TTL_MS)
