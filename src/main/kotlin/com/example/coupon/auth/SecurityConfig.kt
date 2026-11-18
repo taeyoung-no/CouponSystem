@@ -9,7 +9,7 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
-class SecurityConfig(private val jwtProvider: JwtProvider) {
+class SecurityConfig {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -18,12 +18,12 @@ class SecurityConfig(private val jwtProvider: JwtProvider) {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it.requestMatchers("/api/hello", "/api/member/**").permitAll()
-                it.requestMatchers(HttpMethod.POST, "/api/coupon").permitAll()
+                it.requestMatchers(HttpMethod.POST, "/api/coupon").hasRole("ADMIN")
                 it.requestMatchers("/api/coupon/dlt/**", "/api/coupon/*/reconcile").hasRole("ADMIN")
                 it.anyRequest().authenticated()
             }
             .addFilterBefore(
-                JwtAuthFilter(jwtProvider),
+                HeaderAuthFilter(),
                 UsernamePasswordAuthenticationFilter::class.java,
             )
             .build()
