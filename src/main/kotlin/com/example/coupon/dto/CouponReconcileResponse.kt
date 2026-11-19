@@ -1,6 +1,6 @@
 package com.example.coupon.dto
 
-class CouponReconcileResponse(
+data class CouponReconcileResponse(
     val couponId: Long,
     val redisCount: Long?,
     val dbCount: Int?,

@@ -1,6 +1,6 @@
 package com.example.coupon.dto
 
-class CouponResponse(
+data class CouponResponse(
     val id: Long,
     val count: Int,
 )

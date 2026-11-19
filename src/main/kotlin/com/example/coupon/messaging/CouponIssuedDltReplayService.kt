@@ -9,6 +9,7 @@ class CouponIssuedDltReplayService(
     private val couponIssuedDltLogRepository: CouponIssuedDltLogRepository,
     private val couponIssuedProducer: CouponIssuedProducer,
 ) {
+
     private val jsonMapper = JsonMapper.builder().findAndAddModules().build()
 
     @Transactional
