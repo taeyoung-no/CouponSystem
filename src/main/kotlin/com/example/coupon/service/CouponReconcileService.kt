@@ -14,7 +14,6 @@ class CouponReconcileService(
     private val issuedCouponRepository: IssuedCouponRepository,
     private val redisTemplate: StringRedisTemplate,
     @Value("\${coupon.reconcile.interval-ms}") private val intervalMs: Long,
-    @Value("\${coupon.reconcile.grace-period-ms}") private val gracePeriodMs: Long,
 ) {
 
     fun report(couponId: Long): CouponReconcileResponse {
@@ -48,7 +47,7 @@ class CouponReconcileService(
 
     @Scheduled(fixedRateString = "\${coupon.reconcile.interval-ms}")
     fun recent() {
-        val end = System.currentTimeMillis() - gracePeriodMs
+        val end = System.currentTimeMillis()
         val start = end - intervalMs * 2
         val couponIds = redisTemplate.opsForZSet().rangeByScore(
             "coupon:reconcile:recent",
