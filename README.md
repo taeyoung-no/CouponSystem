@@ -19,6 +19,11 @@
 - 서버가 두 대면 입장 속도가 두 배가 되는 문제를 분산 락으로 해결
 - 한 사용자의 과도한 요청을 Spring Cloud Gateway의 회원별 Rate Limit으로 차단
 
+[쿠폰 발급 시스템 정합성 지키기](https://taeyoung-no.github.io/2026/11/21/coupon-consistency.html)
+- Redis에서 발급이 확정됐는데 데이터베이스 쓰기에 실패하는 문제를 DLT 재처리로 해결
+- Redis 발급자 목록 유실로 쿠폰이 중복 발급되는 문제를 Reconcile로 해결
+- 재고 불일치는 어느 쪽이 틀렸는지 알 수 없어 자동 보정 대신 감지만 구현
+
 ## 기술 스택
 핵심이라고 생각하는 것만 정리했습니다.
 
