@@ -14,6 +14,7 @@ class CouponReconcileService(
     private val issuedCouponRepository: IssuedCouponRepository,
     private val redisTemplate: StringRedisTemplate,
     @Value("\${coupon.reconcile.interval-ms}") private val intervalMs: Long,
+    @Value("\${coupon.reconcile.grace-period-ms}") private val gracePeriodMs: Long,
 ) {
 
     fun report(couponId: Long): CouponReconcileResponse {
@@ -47,7 +48,7 @@ class CouponReconcileService(
 
     @Scheduled(fixedRateString = "\${coupon.reconcile.interval-ms}")
     fun recent() {
-        val end = System.currentTimeMillis()
+        val end = System.currentTimeMillis() - gracePeriodMs
         val start = end - intervalMs * 2
         val couponIds = redisTemplate.opsForZSet().rangeByScore(
             "coupon:reconcile:recent",
@@ -55,6 +56,11 @@ class CouponReconcileService(
             end.toDouble(),
         ) ?: emptySet()
 
-        couponIds.mapNotNull { it.toLongOrNull() }.forEach { reconcile(it) }
+        for (couponId in couponIds.mapNotNull { it.toLongOrNull() }) {
+            val result = reconcile(couponId)
+            if (!result.countMatched) {
+                // 재고 불일치 알림
+            }
+        }
     }
 }
